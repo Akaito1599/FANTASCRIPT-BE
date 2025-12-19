@@ -1,0 +1,105 @@
+package com.example.fantascript.model.entities;
+
+import com.example.fantascript.model.dto.TelecronacaDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+
+public class Partita {
+    private String id;
+  private Squadra squadraCasa;
+  private Squadra squadraTrasferta;
+  private Squadra vincitore;
+  private List<TelecronacaDTO> telecronaca = new ArrayList<>();
+  private int [] golCasa;
+  private int [] golTrasferta;
+
+
+    public Partita(Squadra squadraCasa, Squadra squadraTrasferta, Squadra vincitore, int [] golCasa, int [] golTrasferta) {
+        this.squadraCasa = squadraCasa;
+        this.squadraTrasferta = squadraTrasferta;
+        this.vincitore = vincitore;
+        this.golCasa = golCasa;
+        this.golTrasferta = golTrasferta;
+    }
+
+    //simula partita tra casa e trasferta
+
+    public void simula ()
+    {
+        id=squadraCasa.getNome()+"-"+squadraTrasferta.getNome();
+
+
+        // gol in casa da 0 a 5
+        int numerocasa = (int) (Math.random()*6);
+
+        //gol in trasfera **
+        int numerotrasferta = (int) (Math.random()*6);
+
+        this.golCasa=new int[numerocasa];
+
+        for (int i=0;i<numerocasa;i++)
+        {
+            this.golCasa[i]=(int) (Math.random()*91);
+        }
+
+
+        this.golTrasferta=new int[numerotrasferta];
+
+        for (int i=0;i<numerotrasferta;i++)
+        {
+            this.golTrasferta[i]=(int) (Math.random()*91);
+        }
+        Arrays.sort(this.golCasa);
+        Arrays.sort(this.golTrasferta);
+
+        if (numerocasa>numerotrasferta)
+        {
+            vincitore= squadraCasa; //vince squadra in casa
+
+        } else if (numerocasa<numerotrasferta) {
+            vincitore = squadraTrasferta; //vince trasferta
+        }
+          else
+          {
+              //pareggio: si simulano i rigori in caso di pareggio
+              int rigoriCasa = 0;
+              int rigoriTrasferta = 0;
+
+              //ogni squadra ha a disposizione 5 rigori
+
+              for (int i = 0; i < 5; i ++)
+              {
+                  if (Math.random()>0.4)rigoriCasa++; //60 per cento di poss do segnare
+                  if (Math.random()>0.4)rigoriTrasferta++; // idem
+
+              }
+
+              //se ancora pari rigori a oltranza
+              while (rigoriCasa==rigoriTrasferta)
+              {
+                  if (Math.random() > 0.4) rigoriCasa++;
+                  if (Math.random() > 0.4) rigoriTrasferta++;
+              } //determina il vicnitore dei rigori
+
+              vincitore= rigoriCasa>rigoriTrasferta?squadraCasa:squadraTrasferta;
+
+              System.out.println("Fine partita: Pari--> Si va ai Rigori!");
+              System.out.println("Casa " + squadraCasa.getNome()+": " + rigoriCasa + " rigori");
+              System.out.println("Trasferta " + squadraTrasferta.getNome()+": " + rigoriTrasferta + " rigori");
+
+
+        }
+        }
+
+
+    }
